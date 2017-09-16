@@ -121,12 +121,24 @@ public final class Main {
     
     private static ShardingDataSource getShardingDataSource() throws SQLException {
         DataSourceRule dataSourceRule = new DataSourceRule(createDataSourceMap());
-        TableRule orderTableRule = TableRule.builder("t_order").actualTables(Arrays.asList("t_order_0", "t_order_1")).dataSourceRule(dataSourceRule).build();
-        TableRule orderItemTableRule = TableRule.builder("t_order_item").actualTables(Arrays.asList("t_order_item_0", "t_order_item_1")).dataSourceRule(dataSourceRule).build();
-        ShardingRule shardingRule = ShardingRule.builder().dataSourceRule(dataSourceRule).tableRules(Arrays.asList(orderTableRule, orderItemTableRule))
+        TableRule orderTableRule = TableRule.builder("t_order")
+                .actualTables(Arrays.asList("t_order_0", "t_order_1"))
+                .dataSourceRule(dataSourceRule)
+                .build();
+
+        TableRule orderItemTableRule = TableRule.builder("t_order_item")
+                .actualTables(Arrays.asList("t_order_item_0", "t_order_item_1"))
+                .dataSourceRule(dataSourceRule)
+                .build();
+
+        ShardingRule shardingRule = ShardingRule.builder()
+                .dataSourceRule(dataSourceRule)
+                .tableRules(Arrays.asList(orderTableRule, orderItemTableRule))
                 .bindingTableRules(Collections.singletonList(new BindingTableRule(Arrays.asList(orderTableRule, orderItemTableRule))))
                 .databaseShardingStrategy(new DatabaseShardingStrategy("user_id", new ModuloDatabaseShardingAlgorithm()))
-                .tableShardingStrategy(new TableShardingStrategy("order_id", new ModuloTableShardingAlgorithm())).build();
+                .tableShardingStrategy(new TableShardingStrategy("order_id", new ModuloTableShardingAlgorithm()))
+                .build();
+
         return new ShardingDataSource(shardingRule);
     }
     
@@ -140,9 +152,9 @@ public final class Main {
     private static DataSource createDataSource(final String dataSourceName) {
         BasicDataSource result = new BasicDataSource();
         result.setDriverClassName(com.mysql.jdbc.Driver.class.getName());
-        result.setUrl(String.format("jdbc:mysql://localhost:3306/%s", dataSourceName));
+        result.setUrl(String.format("jdbc:mysql://192.168.2.101:3306/%s", dataSourceName));
         result.setUsername("root");
-        result.setPassword("");
+        result.setPassword("Endeavour.1");
         return result;
     }
     
